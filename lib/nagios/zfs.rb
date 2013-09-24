@@ -1,1 +1,5 @@
+require 'nagiosplugin'
+require 'mixlib/cli'
 require 'nagios/zfs/version'
+require 'nagios/zfs/zpool'
+require 'nagios/zfs/zpool_plugin'
