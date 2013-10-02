@@ -1,7 +1,10 @@
 module Nagios
   module ZFS
     class Zpool
+      attr_reader :name
+
       def initialize(name)
+        raise 'missing pool name' if [nil, ''].include?(name)
         @name = name
       end
 

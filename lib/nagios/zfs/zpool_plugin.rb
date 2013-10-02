@@ -35,6 +35,10 @@ module Nagios
         true
       end
 
+      def message
+        "#{zpool.name} #{zpool.capacity}%"
+      end
+
     private
 
       def critical_capacity?

@@ -19,6 +19,10 @@ Feature: Check zpool capacity
     When I run `check_zpool -p tank -w 81 -c 82`
     Then the status should be ok
 
+  Scenario: Display actual capacity
+    When I run `check_zpool -p tank -w 79 -c 80`
+    Then the stdout should contain "tank 80%"
+
   #NOTE: This currently does not work!
   #Scenario: Unknown zpool name
     #When I run `check_zpool -p foo -w 81 -c 82`

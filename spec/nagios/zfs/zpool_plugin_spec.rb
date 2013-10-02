@@ -78,6 +78,16 @@ module Nagios
         end
       end
 
+      describe '#message' do
+        it 'includes the pool name and capcity' do
+          zpool = double('zpool')
+          zpool.should_receive(:name).and_return('tank')
+          zpool.should_receive(:capacity).and_return(42)
+          plugin.stub(:zpool).and_return(zpool)
+          expect(plugin.message).to eq('tank 42%')
+        end
+      end
+
       describe '#zpool' do
         let(:zpool) { double('zpool') }
 
