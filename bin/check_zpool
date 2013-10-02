@@ -2,4 +2,4 @@
 
 require 'nagios/zfs'
 
-Nagios::ZFS::ZpoolPlugin.new.check!
+Nagios::ZFS::ZpoolPlugin.check
