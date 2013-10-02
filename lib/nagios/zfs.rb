@@ -1,7 +1,5 @@
-require "nagios/zfs/version"
-
-module Nagios
-  module Zfs
-    # Your code goes here...
-  end
-end
+require 'nagiosplugin'
+require 'mixlib/cli'
+require 'nagios/zfs/version'
+require 'nagios/zfs/zpool'
+require 'nagios/zfs/zpool_plugin'
