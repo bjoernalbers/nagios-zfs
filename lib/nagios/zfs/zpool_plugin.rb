@@ -9,7 +9,7 @@ module Nagios
 
       option :critical,
         :short => '-c CRITICAL_CAPACITY',
-        :short => '--critical CRITICAL_CAPACITY',
+        :long  => '--critical CRITICAL_CAPACITY',
         :proc  => Proc.new { |config| config.to_i }
 
       option :warning,
