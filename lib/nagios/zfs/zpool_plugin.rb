@@ -5,7 +5,8 @@ module Nagios
 
       option :zpool,
         :short => '-p ZPOOL_NAME',
-        :long  => '--pool ZPOOL_NAME'
+        :long  => '--pool ZPOOL_NAME',
+        :required => true
 
       option :critical,
         :short => '-c CRITICAL_CAPACITY',
