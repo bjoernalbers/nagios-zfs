@@ -4,10 +4,18 @@ module Nagios
   module ZFS
     describe ZpoolPlugin do
       let(:plugin) { ZpoolPlugin.new }
-      let(:argv)   { [] }
+      let(:argv)   { %w(--pool tank) }
 
       before do
         ZpoolPlugin.any_instance.stub(:argv).and_return(argv)
+      end
+
+      context 'without required arguments' do
+        let(:argv) { [] }
+
+        it 'raises an error without pool name' do
+          expect { plugin }.to raise_error(SystemExit)
+        end
       end
 
       describe '#critical?' do
