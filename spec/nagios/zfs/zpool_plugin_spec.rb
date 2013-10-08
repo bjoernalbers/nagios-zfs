@@ -104,18 +104,17 @@ module Nagios
 
       describe '#config' do
         %w(-p --pool).each do |opt|
-          name = 'tank'
-          context "with #{opt} #{name}" do
-            let(:argv) { [opt, name] }
+          context "with #{opt}" do
+            before { argv << opt << 'tank' }
 
-            it { expect(plugin.config[:zpool]).to eq(name) }
+            it { expect(plugin.config[:zpool]).to eq('tank') }
           end
         end
 
         %w(-c --critical).each do |opt|
           threshold = 42
-          context "with #{opt} #{threshold}" do
-            let(:argv) { [opt, threshold.to_s] }
+          context "with #{opt}" do
+            before { argv << opt << threshold.to_s }
 
             it { expect(plugin.config[:critical]).to eq(threshold) }
           end
@@ -123,8 +122,8 @@ module Nagios
 
         %w(-w --warning).each do |opt|
           threshold = 42
-          context "with #{opt} #{threshold}" do
-            let(:argv) { [opt, threshold.to_s] }
+          context "with #{opt}" do
+            before { argv << opt << threshold.to_s }
 
             it { expect(plugin.config[:warning]).to eq(threshold) }
           end
