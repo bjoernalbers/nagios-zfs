@@ -20,14 +20,57 @@ module Nagios
       end
 
       describe '#critical?' do
-        it 'returns true when capacity is critical' do
+        before do
+          plugin.stub(:critical_capacity?).and_return(false)
+          plugin.stub(:critical_health?).and_return(false)
+        end
+
+        it 'is true when capacity is critical' do
           plugin.should_receive(:critical_capacity?).and_return(true)
           expect(plugin.critical?).to be(true)
         end
 
-        it 'returns false when capacity is not critical' do
+        it 'is true when health is critical' do
+          plugin.should_receive(:critical_health?).and_return(true)
+          expect(plugin.critical?).to be(true)
+        end
+
+        it 'is false when capacity is not critical' do
           plugin.should_receive(:critical_capacity?).and_return(false)
           expect(plugin.critical?).to be(false)
+        end
+
+        it 'is false when health is not critical' do
+          plugin.should_receive(:critical_health?).and_return(false)
+          expect(plugin.critical?).to be(false)
+        end
+
+      end
+
+      describe '#warning?' do
+        before do
+          plugin.stub(:warning_capacity?).and_return(false)
+          plugin.stub(:warning_health?).and_return(false)
+        end
+
+        it 'is true when capacity is warning' do
+          plugin.should_receive(:warning_capacity?).and_return(true)
+          expect(plugin.warning?).to be(true)
+        end
+
+        it 'is true when health is warning' do
+          plugin.should_receive(:warning_health?).and_return(true)
+          expect(plugin.warning?).to be(true)
+        end
+
+        it 'is false when capacity is not warning' do
+          plugin.should_receive(:warning_capacity?).and_return(false)
+          expect(plugin.warning?).to be(false)
+        end
+
+        it 'is false when health is not warning' do
+          plugin.should_receive(:warning_health?).and_return(false)
+          expect(plugin.warning?).to be(false)
         end
       end
 
@@ -39,26 +82,14 @@ module Nagios
           plugin.stub(:config).and_return({:critical => 80})
         end
 
-        it 'returns true when capacity exceeds critical threshold' do
+        it 'is true when capacity exceeds critical threshold' do
           zpool.should_receive(:capacity).and_return(80)
           expect(plugin.send(:critical_capacity?)).to be(true)
         end
 
-        it 'returns false when capacity does not exceed critical threshold' do
+        it 'is false when capacity does not exceed critical threshold' do
           zpool.should_receive(:capacity).and_return(79)
           expect(plugin.send(:critical_capacity?)).to be(false)
-        end
-      end
-
-      describe '#warning?' do
-        it 'returns true when capacity is warning' do
-          plugin.should_receive(:warning_capacity?).and_return(true)
-          expect(plugin.warning?).to be(true)
-        end
-
-        it 'returns false when capacity is not warning' do
-          plugin.should_receive(:warning_capacity?).and_return(false)
-          expect(plugin.warning?).to be(false)
         end
       end
 
@@ -70,14 +101,46 @@ module Nagios
           plugin.stub(:config).and_return({:warning => 80})
         end
 
-        it 'returns true when capacity exceeds warning threshold' do
+        it 'is true when capacity exceeds warning threshold' do
           zpool.should_receive(:capacity).and_return(80)
           expect(plugin.send(:warning_capacity?)).to be(true)
         end
 
-        it 'returns false when capacity does not exceed warning threshold' do
+        it 'is false when capacity does not exceed warning threshold' do
           zpool.should_receive(:capacity).and_return(79)
           expect(plugin.send(:warning_capacity?)).to be(false)
+        end
+      end
+
+      describe '#critical_health?' do
+        let(:zpool) { double('zpool') }
+
+        before { plugin.stub(:zpool).and_return(zpool) }
+
+        it 'is true with a faulted pool' do
+          zpool.should_receive(:health).and_return('FAULTED')
+          expect(plugin.send(:critical_health?)).to be(true)
+        end
+
+        it 'is false without a faulted pool' do
+          zpool.should_receive(:health).and_return('DEGRADED')
+          expect(plugin.send(:critical_health?)).to be(false)
+        end
+      end
+
+      describe '#warning_health?' do
+        let(:zpool) { double('zpool') }
+
+        before { plugin.stub(:zpool).and_return(zpool) }
+
+        it 'is true with a degraded pool' do
+          zpool.should_receive(:health).and_return('DEGRADED')
+          expect(plugin.send(:warning_health?)).to be(true)
+        end
+
+        it 'is false without a degraded pool' do
+          zpool.should_receive(:health).and_return('ONLINE')
+          expect(plugin.send(:warning_health?)).to be(false)
         end
       end
 
@@ -88,12 +151,13 @@ module Nagios
       end
 
       describe '#message' do
-        it 'includes the pool name and capcity' do
+        it 'includes the pool name, health and capcity' do
           zpool = double('zpool')
           zpool.should_receive(:name).and_return('tank')
+          zpool.should_receive(:health).and_return('ONLINE')
           zpool.should_receive(:capacity).and_return(42)
           plugin.stub(:zpool).and_return(zpool)
-          expect(plugin.message).to eq('tank 42%')
+          expect(plugin.message).to eq('tank ONLINE (42%)')
         end
       end
 

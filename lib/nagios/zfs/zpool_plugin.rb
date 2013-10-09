@@ -24,11 +24,11 @@ module Nagios
       end
 
       def critical?
-        critical_capacity?
+        critical_capacity? || critical_health?
       end
 
       def warning?
-        warning_capacity?
+        warning_capacity? || warning_health?
       end
 
       # No explicite ok check.
@@ -37,7 +37,7 @@ module Nagios
       end
 
       def message
-        "#{zpool.name} #{zpool.capacity}%"
+        "#{zpool.name} #{zpool.health} (#{zpool.capacity}%)"
       end
 
     private
@@ -48,6 +48,14 @@ module Nagios
 
       def warning_capacity?
         zpool.capacity >= config[:warning]
+      end
+
+      def critical_health?
+        zpool.health == 'FAULTED'
+      end
+
+      def warning_health?
+        zpool.health == 'DEGRADED'
       end
 
       def zpool

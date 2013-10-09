@@ -35,6 +35,21 @@ module Nagios
           2.times { expect(zpool.send(:query)).to eq('chunky bacon') }
         end
       end
+
+      describe '#health' do
+        it 'returns and caches the health by command-line' do
+          zpool.should_receive(:`).with('zpool list -H -o health tank').
+            once.and_return("ONLINE\n")
+          2.times { expect(zpool.health).to eq('ONLINE') }
+        end
+
+        it 'raises an error with an unknown health' do
+          zpool.stub(:`).and_return("SICK\n")
+          expect { zpool.health }.to raise_error /unknown health: SICK/
+        end
+
+        it 'raises an error when the command returns a non-zero exit code'
+      end
     end
   end
 end
