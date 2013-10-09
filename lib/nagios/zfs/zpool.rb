@@ -1,6 +1,8 @@
 module Nagios
   module ZFS
     class Zpool
+      KNOWN_POOL_HEALTHS = %(ONLINE DEGRADED FAULTED)
+
       attr_reader :name
 
       def initialize(name)
@@ -13,7 +15,14 @@ module Nagios
       end
 
       def query
-        @query ||= `zpool list -H -o name,cap #{@name}`
+        @query ||= `zpool list -H -o name,cap #{name}`
+      end
+
+      def health
+        @health ||= `zpool list -H -o health #{name}`.strip
+        raise "unknown health: #{@health}" unless
+          KNOWN_POOL_HEALTHS.include?(@health)
+        @health
       end
     end
   end
