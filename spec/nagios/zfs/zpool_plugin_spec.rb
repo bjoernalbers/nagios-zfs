@@ -14,6 +14,7 @@ module Nagios
         let(:argv) { [] }
 
         it 'raises an error without pool name' do
+          ZpoolPlugin.any_instance.stub(:puts) # Don't mess up our spec output.
           expect { plugin }.to raise_error(SystemExit)
         end
       end
