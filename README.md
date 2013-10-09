@@ -2,8 +2,6 @@
 
 Check ZFS Zpool health and capacity via Nagios.
 
-**NOTE: This is an early prototype!**
-
 ## Installation
 
 Install it via RubyGems:
@@ -18,11 +16,16 @@ Zpools.
     $ check_zpool --help
 
 A Zpool is in a critical state if the pool capacity jumps over a certain
-rate (performance usually starts to suck near 80%) or when the pool is
+rate (performance usually starts to suck at 80%) or when the pool is
 faulted.
-The status will be warning if your Zpool is degraded (not implemented
-yet!) or if the capacity breaks your warning threshold.
-Take a look at the features...
+The status will be warning if your Zpool is degraded or if the capacity
+breaks your warning threshold.
+Take a look at the
+[features](https://github.com/bjoernalbers/nagios-zfs/tree/master/features)
+...
+
+This plugin works successfully under Oracle Solaris 11 (ZFS VERSION:
+11.11,REV=2009.11.11).
 
 ## Contributing
 
